@@ -1,0 +1,149 @@
+﻿<Window x:Class="SluggaManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SluggaManager"
+        mc:Ignorable="d" DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
+        Title="{Binding Title}" Height="800" Width="1500">
+    <Window.Resources>
+        <local:LockTimestampConverter x:Key="lockStamp"></local:LockTimestampConverter>
+    </Window.Resources>
+    <Grid Background="LightGoldenrodYellow">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="32"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid x:Name="Toolbar" Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBox  Text="{Binding Wallet}" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBox>
+            <TextBlock Grid.Column="1" Text="{Binding APIVersion}" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+            <TextBlock Grid.Column="2"  HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Maroon" FontWeight="Bold"> 
+                <Run Text="{Binding ShardCount}"></Run>
+                <Run>shards</Run>
+            </TextBlock>
+        </Grid>
+        <Grid Background="#dddddd88" Margin="10" Grid.Row="1" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="25*"></ColumnDefinition>
+                <ColumnDefinition Width="10*" ></ColumnDefinition>
+                <ColumnDefinition  Width="10*" ></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <ListView  Margin="5" ItemsSource="{Binding SluggaStateList}" x:Name="SluggaList" Width="1200" >
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Stretch" Width="1200"></WrapPanel>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid  Background="#5555bbff"  Height="170" Width="300" >
+                            <Grid Margin="4" >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <TextBlock FontWeight="Bold" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="2" Text="{Binding message.slug.token_id}" ></TextBlock>
+                                <TextBlock FontSize="16" FontWeight="Bold" ></TextBlock>
+                                <TextBlock FontSize="16" Foreground="#333" Margin="0,2" HorizontalAlignment="Right" Text="{Binding Path=message.slug.lock_in_progress_to, Converter={StaticResource lockStamp}}"></TextBlock>
+                                <TextBlock Grid.Row="1" FontSize="16" >
+                                <Run>Last: </Run>
+                                <Run Foreground="Blue" Text="{Binding Path=message.slug.action_in_progress}"></Run>
+                                    <Run>///</Run>
+                                    <Run>Level:</Run><Run Text="{Binding message.slug.rep}"></Run>
+                                    <Run >XP:</Run><Run Text="{Binding message.slug.xp}"></Run>
+                                    <Run >(</Run><Run Text="{Binding message.slug.prophet_id}"></Run><Run >)</Run>
+                                </TextBlock>
+                                <StackPanel Orientation="Horizontal" Grid.Row="2">
+                                    <Button IsEnabled="{Binding IsAvailable}" FontSize="13" Background="#44E3E3FF" Padding="20,0" Margin="2" CommandParameter="{Binding }" Command="{Binding Source={StaticResource Locator}, Path=Main.SluggaSleepAction}" >Sleep</Button>
+                                    <Button IsEnabled="{Binding IsAvailable}" FontSize="13" Background="#44E3E3FF" Padding="20,0" Margin="2" CommandParameter="{Binding }" Command="{Binding Source={StaticResource Locator}, Path=Main.SluggaFeedAction}" >Feed</Button>
+                                    <Button IsEnabled="{Binding IsAvailable}" FontSize="13" Background="#44E3E3FF" Padding="28,0" Margin="2" CommandParameter="{Binding}" Command="{Binding Source={StaticResource Locator}, Path=Main.SluggaPetAction}" >Pet</Button>
+                                    <Button IsEnabled="{Binding IsAvailable}" FontSize="13" Background="#44E3E3FF" Padding="16,0" Margin="2" CommandParameter="{Binding}" Command="{Binding Source={StaticResource Locator}, Path=Main.SluggaRefreshAction}" >!!!</Button>
+                                </StackPanel>
+                                <ListView Grid.RowSpan="2" Background="Transparent" BorderThickness="0" Grid.Row="3" Margin="0" ItemsSource="{Binding message.slug.locks}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontSize="12" >
+                                                <Run FontWeight="Bold" Foreground="Red" Text="{Binding count}"></Run>
+                                                <Run x:Name="x" FontWeight="Bold" >x</Run>
+                                                <Run x:Name="action" FontWeight="Bold" Text="{Binding action}"></Run>
+                                                <Run>(locked until </Run>
+                                                <Run Text="{Binding locked_to, Converter={StaticResource lockStamp}}"></Run>
+                                                <Run>)</Run>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Grid>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <ListView Grid.Column="1" Margin="5" ItemsSource="{Binding ServiceMessages}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" ></TextBlock>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Grid Grid.Column="2" Margin="5" >
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition Height="3*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="10"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        
+                        <RowDefinition Height="10"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="10"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="2" Grid.Column="1"  VerticalAlignment="Center">When</Label>
+                    <Label Grid.Row="3" Grid.Column="1"  VerticalAlignment="Center">Which Action</Label>
+                    <TextBox Text="{Binding JobActionSelectedDateText}" Grid.Row="2" Grid.Column="3" VerticalAlignment="Center" ></TextBox>
+                    <ComboBox Grid.Row="3" Grid.Column="3" VerticalAlignment="Center" SelectedIndex="{Binding JobActionSelectedIndex, Mode=TwoWay}">
+                        <ComboBoxItem Content="Pet" Tag="Pet" ></ComboBoxItem>
+                        <ComboBoxItem Content="Feed" Tag="Feed"></ComboBoxItem>
+                        <ComboBoxItem Content="Sleep" Tag="Sleep"></ComboBoxItem>
+                    </ComboBox>
+                    <Button Grid.Row="4" Grid.Column="3" VerticalAlignment="Center" HorizontalContentAlignment="Center" Margin="40,0,0,0" Command="{Binding AddScheduledActionCommand}">Schedule</Button>
+                </Grid>
+                <ListView ItemsSource="{Binding ScheduledJobs}" Grid.Row="1" FontSize="18">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock  >
+                                <Run Text="{Binding ActionName}"></Run>
+                                <Run> at </Run>
+                                <Run Text="{Binding TriggerTime}"></Run>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+        </Grid>
+        <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Left">
+            <Button Margin="4" Width="100" Command="{Binding RefreshStateCommand}">Refresh State</Button>
+            
+        </StackPanel>
+    </Grid>
+</Window>
