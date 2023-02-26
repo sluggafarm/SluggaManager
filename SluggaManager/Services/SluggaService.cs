@@ -10,7 +10,7 @@ namespace SluggaManager.Services
     public sealed class SluggaService : APIServiceProxy, ISluggaService
     {
         // hard-coded.... for the now.
-        public string Wallet { get; set; } = "0x8011c924c461efc9931d00a3f36ebf663c5d98fc";
+        public string Wallet { get; set; } = "[Your Wallet Here]";
         public string Version { get; set; } = "v1";
 
         public string GetShards()
